@@ -18,11 +18,16 @@ package com.example.androiddevchallenge
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
+import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
+import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.navArgument
+import androidx.navigation.compose.rememberNavController
 import com.example.androiddevchallenge.ui.theme.MyTheme
 
 class MainActivity : AppCompatActivity() {
@@ -30,7 +35,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             MyTheme {
-                MyApp()
+                MyApp(Fake.liveStocks)
             }
         }
     }
@@ -38,9 +43,25 @@ class MainActivity : AppCompatActivity() {
 
 // Start building your app here!
 @Composable
-fun MyApp() {
-    Surface(color = MaterialTheme.colors.background) {
-        Text(text = "Ready... Set... GO!")
+fun MyApp(liveStocks: List<LiveStock>) {
+    val navController = rememberNavController()
+    Scaffold(topBar = {
+        TopAppBar(title = { Text(text = "LiveStock Adoption") })
+    }) {
+        NavHost(navController = navController, startDestination = Screen.Home.routeName) {
+            composable(Screen.Home.routeName)
+            { Home(liveStocks = liveStocks, navController) }
+
+            composable(
+                "${Screen.Detail.routeName}/{id}/",
+                arguments = listOf(navArgument("id") { type = NavType.IntType })
+            )
+            {
+                Detail(
+                    liveStockId = it.arguments?.getInt("id") ?: 0
+                )
+            }
+        }
     }
 }
 
@@ -48,7 +69,7 @@ fun MyApp() {
 @Composable
 fun LightPreview() {
     MyTheme {
-        MyApp()
+        MyApp(Fake.liveStocks)
     }
 }
 
@@ -56,6 +77,6 @@ fun LightPreview() {
 @Composable
 fun DarkPreview() {
     MyTheme(darkTheme = true) {
-        MyApp()
+        MyApp(Fake.liveStocks)
     }
 }
