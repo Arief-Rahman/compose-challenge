@@ -45,18 +45,18 @@ class MainActivity : AppCompatActivity() {
 @Composable
 fun MyApp(liveStocks: List<LiveStock>) {
     val navController = rememberNavController()
-    Scaffold(topBar = {
-        TopAppBar(title = { Text(text = "LiveStock Adoption") })
-    }) {
+    Scaffold(
+        topBar = {
+            TopAppBar(title = { Text(text = "LiveStock Adoption") })
+        }
+    ) {
         NavHost(navController = navController, startDestination = Screen.Home.routeName) {
-            composable(Screen.Home.routeName)
-            { Home(liveStocks = liveStocks, navController) }
+            composable(Screen.Home.routeName) { Home(liveStocks = liveStocks, navController) }
 
             composable(
                 "${Screen.Detail.routeName}/{id}/",
                 arguments = listOf(navArgument("id") { type = NavType.IntType })
-            )
-            {
+            ) {
                 Detail(
                     liveStockId = it.arguments?.getInt("id") ?: 0
                 )
